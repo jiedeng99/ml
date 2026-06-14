@@ -1,42 +1,61 @@
-# Convolutionary Neural Networks
+# Convolutional Neural Networks
 
-## 2026-06-09
+## Learned
 
-Learned:
-- optimizers including SGD + momentum, ADAM and different variants of ADAM
-- nn.Linear
-- Hessians
-- Eigenvalues
+- `Conv2d`
 
-Questions and Answers:
-- What are the different optimizers in PyTorch and what does the optimizer do?
-Optimizer is the component to update a neural network' parameters (weights and biases) to reduce loss function.
-All optimizers are trying to answer the same question: Given the gradients, what is the smartest way to update the parameters so the loss decreases as quickly and reliably as possible.
+## Questions and Answers
 
-The common optimizers to be used are as follows.
+### What are the different optimizers in PyTorch, and what does an optimizer do?
 
-FeedForward networks, Reinforcement Learning            ADAM
-CNN                                                     SGD + Momentum, ADAM
-Transformer, LLM                                        AdamW
+An optimizer updates a neural network's parameters, such as weights and biases, to reduce the loss function.
 
-- What does tqdm do?
-It gives a graphical bar showing the progress.
+All optimizers try to answer the same question: given the gradients, what is the smartest way to update the parameters so the loss decreases as quickly and reliably as possible?
 
-- What does dropout and batch norm do?
-These are used in neural networks to stablize model training and improve the model. The purpose of dropout is to reduce overfitting by randomly zeroes some weights and biases. The purpose of BatchNorm is to make gradients behave more consistenly so that the model converges faster with good accuracy.
+Common choices:
+
+| Architecture or task | Common optimizers |
+| --- | --- |
+| Feedforward networks | `Adam` |
+| Reinforcement learning | `Adam` |
+| CNNs | `SGD + Momentum`, `Adam` |
+| Transformers and LLMs | `AdamW` |
+
+### What does `tqdm` do?
+
+`tqdm` displays a progress bar for loops, which makes it easier to track training, validation, or data processing progress.
+
+### What do dropout and batch normalization do?
+
+Dropout and batch normalization are used to stabilize training and improve model performance.
+
+- Dropout reduces overfitting by randomly zeroing out some activations during training.
+- Batch normalization helps gradients behave more consistently, which can make the model converge faster and reach better accuracy.
 
 Dropout is widely used in all architectures.
 
-In a feedforward network, a common pattern is Linear -> BatchNorm -> ReLU -> Dropout.
-In CNN, a common pattern is Conv -> BatchNorm -> ReLU. Dropout is used less frequently.
-In transformer, BatchNorm is replaced by LayerNorm, so it is usually Attention -> LayerNorm. 
+Common patterns:
 
-- What are the differences between BatchNorm1d and BatchNorm2d?
-The difference is whether the feature involves 1-dimensional data or 2-dimensional data across the batch.
-In MLP, after nn.Linear, it is nn.BatchNorm1d.
-In CNN, after nn.Conv2d, it is nn.BatchNorm2d.
-In 3D CNN, such as videos, after nn.Conv3d, it is nn.BatchNorm3d.
+| Architecture | Common pattern |
+| --- | --- |
+| Feedforward network | `Linear -> BatchNorm -> ReLU -> Dropout` |
+| CNN | `Conv -> BatchNorm -> ReLU` |
+| Transformer | `Attention -> LayerNorm` |
 
-- When doing validation, why are the datasets still divided into batches?
-The main reasons are GPU's memory efficiency and better GPU utilization due to the fact that GPU is optimized for parallel computation. You can use a larger validation batch size than training batch size to get faster validation execution.
+In CNNs, dropout is used less frequently than in feedforward networks. In transformers, `BatchNorm` is usually replaced by `LayerNorm`.
 
+### What are the differences between `BatchNorm1d` and `BatchNorm2d`?
+
+The difference is whether the features are 1-dimensional or 2-dimensional across the batch.
+
+| Model type | Layer | Batch normalization |
+| --- | --- | --- |
+| MLP | `nn.Linear` | `nn.BatchNorm1d` |
+| CNN | `nn.Conv2d` | `nn.BatchNorm2d` |
+| 3D CNN, such as video models | `nn.Conv3d` | `nn.BatchNorm3d` |
+
+### When doing validation, why are datasets still divided into batches?
+
+The main reasons are GPU memory efficiency and better GPU utilization. GPUs are optimized for parallel computation, so batching validation data is usually faster and more memory-efficient than processing examples one at a time.
+
+You can often use a larger validation batch size than training batch size because validation does not need to store gradients for backpropagation.
